@@ -5,12 +5,6 @@ class Devise::MasqueradesController < DeviseController
     prepend_before_filter :authenticate_scope!
   end
 
-  if respond_to?(:before_action)
-    before_action :save_masquerade_owner_session, :only => :show
-  else
-    before_filter :save_masquerade_owner_session, :only => :show
-  end
-
   if respond_to?(:after_action)
     after_action :cleanup_masquerade_owner_session, :only => :back
   else
@@ -18,6 +12,7 @@ class Devise::MasqueradesController < DeviseController
   end
 
   def show
+    save_masquerade_owner_session
     self.resource = resource_class.to_adapter.find_first(:id => params[:id])
 
     redirect_to(new_user_session_path) and return unless self.resource
